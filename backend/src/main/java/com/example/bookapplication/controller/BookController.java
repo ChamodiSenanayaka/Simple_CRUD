@@ -74,4 +74,33 @@ public class BookController {
         List<Book> books = bookService.searchByAuthor(query);
         return new ResponseEntity<>(books, HttpStatus.OK);
     }
+
+    // Alternate Create endpoint (separate API)
+    @PostMapping("/create")
+    public ResponseEntity<Book> createBookAlt(@RequestBody Book book) {
+        Book createdBook = bookService.createBook(book);
+        return new ResponseEntity<>(createdBook, HttpStatus.CREATED);
+    }
+
+    // Alternate Update endpoint (separate API)
+    @PutMapping("/update/{id}")
+    public ResponseEntity<Book> updateBookAlt(@PathVariable Long id, @RequestBody Book bookDetails) {
+        try {
+            Book updatedBook = bookService.updateBook(id, bookDetails);
+            return new ResponseEntity<>(updatedBook, HttpStatus.OK);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    // Alternate Delete endpoint (separate API)
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Void> deleteBookAlt(@PathVariable Long id) {
+        try {
+            bookService.deleteBook(id);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
 }

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 interface Book {
   id?: number;
@@ -22,6 +23,7 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editingBook, setEditingBook] = useState<Book | null>(null);
+  const router = useRouter();
   const [toast, setToast] = useState<Toast | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<{ show: boolean; bookId: number | null; bookTitle: string }>({
     show: false,
@@ -94,7 +96,7 @@ export default function Home() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const url = editingBook ? `${API_URL}/${editingBook.id}` : API_URL;
+      const url = editingBook ? `${API_URL}/update/${editingBook.id}` : `${API_URL}/create`;
       const method = editingBook ? 'PUT' : 'POST';
 
       const response = await fetch(url, {
@@ -125,7 +127,7 @@ export default function Home() {
   const confirmDelete = async () => {
     if (deleteConfirm.bookId) {
       try {
-        const response = await fetch(`${API_URL}/${deleteConfirm.bookId}`, {
+        const response = await fetch(`${API_URL}/delete/${deleteConfirm.bookId}`, {
           method: 'DELETE',
         });
 
@@ -237,14 +239,14 @@ export default function Home() {
               <p className="text-gray-600">Manage your book collection with ease</p>
             </div>
             <button
-              onClick={() => setShowForm(!showForm)}
+              onClick={() => router.push('/create')}
               className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg ${
                 showForm
                   ? 'bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white'
                   : 'bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white'
               }`}
             >
-              {showForm ? '✕ Cancel' : '+ Add New Book'}
+              + Add New Book
             </button>
           </div>
 
@@ -390,13 +392,13 @@ export default function Home() {
                         <td className="px-6 py-4 border-b border-gray-200">
                           <div className="flex gap-2 justify-center">
                             <button
-                              onClick={() => handleEdit(book)}
+                              onClick={() => router.push('/update')}
                               className="bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-white px-4 py-2 rounded-lg transition-all duration-300 transform hover:scale-105 font-medium shadow-md text-sm"
                             >
                               ✏️ Edit
                             </button>
-                            <button
-                              onClick={() => handleDelete(book.id!, book.title)}
+                                        <button
+                                          onClick={() => router.push(`/delete/${book.id}`)}
                               className="bg-gradient-to-r from-red-500 to-pink-600 hover:from-red-600 hover:to-pink-700 text-white px-4 py-2 rounded-lg transition-all duration-300 transform hover:scale-105 font-medium shadow-md text-sm"
                             >
                               🗑️ Delete
