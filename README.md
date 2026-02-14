@@ -1,6 +1,6 @@
 # Book Management System - CRUD Application
 
-A full-stack CRUD application built with Spring Boot (backend), Next.js (frontend), and PostgreSQL (database).
+A full stack CRUD application built with Spring Boot (backend), Next.js (frontend), and PostgreSQL (database).
 
 ## 🚀 Features
 
