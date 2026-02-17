@@ -1,6 +1,6 @@
 package com.example.bookapplication.controller;
 
-import com.example.bookapplication.entity.Book;
+import com.example.bookapplication.dto.BookDTO;
 import com.example.bookapplication.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -34,24 +34,24 @@ public class BookController {
     // Create a new book
     @PostMapping("/create")
     public ResponseEntity<?> createBook(@RequestHeader(value = "X-API-Key", required = false) String apiKey, 
-                                         @RequestBody Book book) {
+                                         @RequestBody BookDTO bookDTO) {
         if (!isValidApiKey(apiKey, createApiKey)) {
             return new ResponseEntity<>("Invalid or missing API key for create operation", HttpStatus.UNAUTHORIZED);
         }
-        Book createdBook = bookService.createBook(book);
+        BookDTO createdBook = bookService.createBook(bookDTO);
         return new ResponseEntity<>(createdBook, HttpStatus.CREATED);
     }
     
     // Get all books
     @GetMapping("/api/books")
-    public ResponseEntity<List<Book>> getAllBooks() {
-        List<Book> books = bookService.getAllBooks();
+    public ResponseEntity<List<BookDTO>> getAllBooks() {
+        List<BookDTO> books = bookService.getAllBooks();
         return new ResponseEntity<>(books, HttpStatus.OK);
     }
     
     // Get book by ID
     @GetMapping("/api/books/{id}")
-    public ResponseEntity<Book> getBookById(@PathVariable Long id) {
+    public ResponseEntity<BookDTO> getBookById(@PathVariable Long id) {
         return bookService.getBookById(id)
                 .map(book -> new ResponseEntity<>(book, HttpStatus.OK))
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
@@ -60,12 +60,12 @@ public class BookController {
     // Update book
     @PutMapping("/update/{id}")
     public ResponseEntity<?> updateBook(@RequestHeader(value = "X-API-Key", required = false) String apiKey,
-                                         @PathVariable Long id, @RequestBody Book bookDetails) {
+                                         @PathVariable Long id, @RequestBody BookDTO bookDTO) {
         if (!isValidApiKey(apiKey, updateApiKey)) {
             return new ResponseEntity<>("Invalid or missing API key for update operation", HttpStatus.UNAUTHORIZED);
         }
         try {
-            Book updatedBook = bookService.updateBook(id, bookDetails);
+            BookDTO updatedBook = bookService.updateBook(id, bookDTO);
             return new ResponseEntity<>(updatedBook, HttpStatus.OK);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -89,15 +89,15 @@ public class BookController {
     
     // Search books by title
     @GetMapping("/api/books/search/title")
-    public ResponseEntity<List<Book>> searchByTitle(@RequestParam String query) {
-        List<Book> books = bookService.searchByTitle(query);
+    public ResponseEntity<List<BookDTO>> searchByTitle(@RequestParam String query) {
+        List<BookDTO> books = bookService.searchByTitle(query);
         return new ResponseEntity<>(books, HttpStatus.OK);
     }
     
     // Search books by author
     @GetMapping("/api/books/search/author")
-    public ResponseEntity<List<Book>> searchByAuthor(@RequestParam String query) {
-        List<Book> books = bookService.searchByAuthor(query);
+    public ResponseEntity<List<BookDTO>> searchByAuthor(@RequestParam String query) {
+        List<BookDTO> books = bookService.searchByAuthor(query);
         return new ResponseEntity<>(books, HttpStatus.OK);
     }
 }
